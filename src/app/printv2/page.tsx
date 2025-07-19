@@ -40,8 +40,10 @@ export default function Home() {
     let currentnumber = number
     let encryptedNumber = encodeNumberToCode(parseInt(number))
     const pdfDoc = await PDFDocument.create();
-    const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    const HelveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+    const Helvetica = await pdfDoc.embedFont(StandardFonts.Helvetica);
 
+    const finalfont = HelveticaBold;
     const inchToPt = 72;
     const pageWidth = 2.5 * inchToPt;
     const pageHeight = 0.6 * inchToPt;
@@ -62,7 +64,7 @@ export default function Home() {
       x: ABC_X,
       y: ABC_Y,
       size: fontSize,
-      font: helveticaFont,
+      font: finalfont,
       color: rgb(0, 0, 0),
     });
 
@@ -73,7 +75,7 @@ export default function Home() {
     x: ABC_X,
     y: ABC_Y - 12,
     size: fontSize,
-    font: helveticaFont,
+    font: finalfont,
     color: rgb(0, 0, 0),
     });
 
@@ -83,7 +85,7 @@ export default function Home() {
         x: ABC_X,
         y: ABC_Y - 24, // 12 points below the previous line
         size: fontSize,
-        font: helveticaFont,
+        font: finalfont,
         color: rgb(0, 0, 0),
     });
     }
@@ -112,7 +114,7 @@ export default function Home() {
       x: backX,
       y: backStartY + 30,
       size: fontSize,
-      font: helveticaFont,
+      font: finalfont,
       color: rgb(0, 0, 0),
     });
 
@@ -120,7 +122,7 @@ export default function Home() {
       x: backX,
       y: backStartY + 18,
       size: fontSize,
-      font: helveticaFont,
+      font: finalfont,
       color: rgb(0, 0, 0),
     });
 
@@ -128,7 +130,7 @@ export default function Home() {
       x: backX,
       y: backStartY + 6,
       size: fontSize,
-      font: helveticaFont,
+      font: finalfont,
       color: rgb(0, 0, 0),
     });
 
