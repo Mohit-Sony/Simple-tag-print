@@ -14,8 +14,31 @@ export default function Home() {
   const [number, setNumber] = useState('');
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  function encodeNumberToCode(num: number): string {
+    const map = ['T', 'R', 'A', 'V', 'E', 'L', 'S', 'Y', 'N', 'C'];
+    return num
+      .toString()
+      .split('')
+      .map(d => map[parseInt(d, 10)])
+      .join('');
+  }
+  
+  function decodeCodeToNumber(code: string): number {
+    const reverseMap: Record<string, string> = {
+      T: '0', R: '1', A: '2', V: '3', E: '4',
+      L: '5', S: '6', Y: '7', N: '8', C: '9'
+    };
+    return parseInt(
+      code
+        .split('')
+        .map(char => reverseMap[char])
+        .join('')
+    );
+  }
 
   const generatePDF = async () => {
+    let currentnumber = number
+    let encryptedNumber = encodeNumberToCode(parseInt(number))
     const pdfDoc = await PDFDocument.create();
     const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
 
@@ -29,9 +52,11 @@ export default function Home() {
     const leftMargin = 10;
 
     // === BACK SIDE TEXT ===
+    const lines = frontInput.includes('/') ? frontInput.split('/') : [frontInput];
     const labelText = `BCE${frontInput}`;
     const ABC_X = leftMargin;
-    const ABC_Y = pageHeight - 20;
+
+    const ABC_Y = !lines[1] ? pageHeight - 20 : pageHeight-13;
 
     page.drawText('BCE', {
       x: ABC_X,
@@ -41,13 +66,27 @@ export default function Home() {
       color: rgb(0, 0, 0),
     });
 
-    page.drawText(frontInput, {
-      x: ABC_X,
-      y: ABC_Y - 12,
-      size: fontSize,
-      font: helveticaFont,
-      color: rgb(0, 0, 0),
+    // Split by slash if present
+
+    // First line (always present)
+    page.drawText(lines[0], {
+    x: ABC_X,
+    y: ABC_Y - 12,
+    size: fontSize,
+    font: helveticaFont,
+    color: rgb(0, 0, 0),
     });
+
+    // Second line (optional)
+    if (lines[1]) {
+    page.drawText(`& ${lines[1]}`, {
+        x: ABC_X,
+        y: ABC_Y - 24, // 12 points below the previous line
+        size: fontSize,
+        font: helveticaFont,
+        color: rgb(0, 0, 0),
+    });
+    }
 
     // === QR Code ===
     const qrDataUrl = await QRCode.toDataURL(labelText);
@@ -55,7 +94,7 @@ export default function Home() {
     const qrImage = await pdfDoc.embedPng(qrImageBytes);
 
     const qrDim = 40;
-    const qrX = pageWidth / 2 - qrDim - 20;
+    const qrX = pageWidth / 2 - qrDim - 10;
     const qrY = pageHeight / 2 - qrDim / 2;
 
     page.drawImage(qrImage, {
@@ -66,7 +105,7 @@ export default function Home() {
     });
 
     // === FRONT SIDE TEXT ===
-    const backX = pageWidth / 2 - 15;
+    const backX = pageWidth / 2 +2;
     const backStartY = -1;
 
     page.drawText(`Purity: ${purity}`, {
@@ -85,7 +124,7 @@ export default function Home() {
       color: rgb(0, 0, 0),
     });
 
-    page.drawText(`${number}`, {
+    page.drawText(`${encryptedNumber}`, {
       x: backX,
       y: backStartY + 6,
       size: fontSize,
