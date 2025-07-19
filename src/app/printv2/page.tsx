@@ -56,7 +56,7 @@ export default function Home() {
     // === BACK SIDE TEXT ===
     const lines = frontInput.includes('/') ? frontInput.split('/') : [frontInput];
     const labelText = `BCE${frontInput}`;
-    const ABC_X = leftMargin;
+    const ABC_X = leftMargin+3;
 
     const ABC_Y = !lines[1] ? pageHeight - 20 : pageHeight-13;
 
@@ -107,7 +107,7 @@ export default function Home() {
     });
 
     // === FRONT SIDE TEXT ===
-    const backX = pageWidth / 2 +2;
+    const backX = pageWidth / 2 + 15;
     const backStartY = -1;
 
     page.drawText(`Purity: ${purity}`, {
