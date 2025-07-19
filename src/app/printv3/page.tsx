@@ -47,112 +47,112 @@ export default function LabelGenerator() {
   const generateMultiplePDF = async () => {
     const pdfDoc = await PDFDocument.create();
     const HelveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-    const font = HelveticaBold;
+    const finalfont = HelveticaBold;
 
     const inchToPt = 72;
     const labelWidth = 2.5 * inchToPt;
     const labelHeight = 0.6 * inchToPt;
     const labelsPerRow = 1;
-    const labelsPerColumn = 5;
+    const labelsPerColumn = 1;
 
     const pageWidth = labelsPerRow * labelWidth;
     const pageHeight = labelsPerColumn * labelHeight;
 
-    let page = pdfDoc.addPage([pageWidth, pageHeight]);
     let labelIndex = 0;
 
     for (const item of items) {
-      const { frontInput, purity, ab, number } = item;
-      const encryptedNumber = encodeNumberToCode(parseInt(number));
-      const labelText = `BCE${frontInput}`;
+        const { frontInput, purity, ab, number } = item;
 
-      const qrDataUrl = await QRCode.toDataURL(labelText);
-      const qrImageBytes = await fetch(qrDataUrl).then((res) => res.arrayBuffer());
-      const qrImage = await pdfDoc.embedPng(qrImageBytes);
-
-      const fontSize = 7;
-      const qrDim = 40;
-      const leftMargin = 10;
-
-      const row = Math.floor(labelIndex / labelsPerRow);
-      const col = labelIndex % labelsPerRow;
-
-      const xOffset = col * labelWidth;
-      const yOffset = pageHeight - (row + 1) * labelHeight;
-
-      const lines = frontInput.includes("/") ? frontInput.split("/") : [frontInput];
-      const ABC_X = xOffset + leftMargin + 3;
-      const ABC_Y = !lines[1] ? yOffset + labelHeight - 20 : yOffset + labelHeight - 16 ;
-
-      page.drawText("BCE", {
-        x: ABC_X,
-        y: ABC_Y,
-        size: fontSize,
-        font,
-        color: rgb(0, 0, 0),
-      });
-
-      page.drawText(lines[0], {
+        let encryptedNumber = encodeNumberToCode(parseInt(number))
+        const page = pdfDoc.addPage([labelWidth, labelHeight]);
+    
+        const fontSize = 7;
+        const leftMargin = 10;
+    
+        // === BACK SIDE TEXT ===
+        const lines = frontInput.includes('/') ? frontInput.split('/') : [frontInput];
+        const labelText = `BCE${frontInput}`;
+        const ABC_X = leftMargin+3;
+    
+        const ABC_Y = !lines[1] ? 25 : 30;
+        
+    
+        page.drawText('BCE', {
+          x: ABC_X,
+          y: ABC_Y,
+          size: fontSize,
+          font: finalfont,
+          color: rgb(0, 0, 0),
+        });
+        console.log("bce title",ABC_X,ABC_Y)
+    
+        // Split by slash if present
+    
+        // First line (always present)
+        page.drawText(lines[0], {
         x: ABC_X,
         y: ABC_Y - 8,
         size: fontSize,
-        font,
+        font: finalfont,
         color: rgb(0, 0, 0),
-      });
-
-      if (lines[1]) {
+        });
+    
+        // Second line (optional)
+        if (lines[1]) {
         page.drawText(`& ${lines[1]}`, {
-          x: ABC_X,
-          y: ABC_Y - 15,
+            x: ABC_X,
+            y: ABC_Y - 17, // 12 points below the previous line
+            size: fontSize,
+            font: finalfont,
+            color: rgb(0, 0, 0),
+        });
+        }
+    
+        // === QR Code ===
+        const qrDataUrl = await QRCode.toDataURL(labelText);
+        const qrImageBytes = await fetch(qrDataUrl).then(res => res.arrayBuffer());
+        const qrImage = await pdfDoc.embedPng(qrImageBytes);
+    
+        const qrDim = 40;
+        const qrX = pageWidth / 2 - qrDim - 10;
+        const qrY = pageHeight / 2 - qrDim / 2;
+    
+        page.drawImage(qrImage, {
+          x: qrX,
+          y: qrY,
+          width: qrDim,
+          height: qrDim,
+        });
+    
+        // === FRONT SIDE TEXT ===
+        const backX = pageWidth / 2 + 15;
+        const backStartY = -1;
+    
+        page.drawText(`Purity: ${purity}`, {
+          x: backX,
+          y: backStartY + 24+4,
           size: fontSize,
-          font,
+          font: finalfont,
+          color: rgb(0, 0, 0),
+        });
+        console.log(backX , backStartY + 24+4,)
+    
+        page.drawText(`G. Wt.: ${ab}`, {
+          x: backX,
+          y: backStartY + 16+4,
+          size: fontSize,
+          font: finalfont,
+          color: rgb(0, 0, 0),
+        });
+    
+        page.drawText(`${encryptedNumber}`, {
+          x: backX,
+          y: backStartY + 8+4,
+          size: fontSize,
+          font: finalfont,
           color: rgb(0, 0, 0),
         });
       }
-
-      const qrX = xOffset + labelWidth / 2 - qrDim - 10;
-      const qrY = yOffset + labelHeight / 2 - qrDim / 2;
-
-      page.drawImage(qrImage, {
-        x: qrX,
-        y: qrY,
-        width: qrDim,
-        height: qrDim,
-      });
-
-      const backX = xOffset + labelWidth / 2 + 15;
-      const backStartY = yOffset - 1;
-
-      page.drawText(`Purity: ${purity}`, {
-        x: backX,
-        y: backStartY + 28,
-        size: fontSize,
-        font,
-        color: rgb(0, 0, 0),
-      });
-
-      page.drawText(`G. Wt.: ${ab}`, {
-        x: backX,
-        y: backStartY + 20,
-        size: fontSize,
-        font,
-        color: rgb(0, 0, 0),
-      });
-
-      page.drawText(`${encryptedNumber}`, {
-        x: backX,
-        y: backStartY + 12,
-        size: fontSize,
-        font,
-        color: rgb(0, 0, 0),
-      });
-
-      labelIndex++;
-      if (labelIndex === labelsPerRow * labelsPerColumn) {
-        page = pdfDoc.addPage([pageWidth, pageHeight]);
-        labelIndex = 0;
-      }
-    }
 
     const pdfBytes = await pdfDoc.save();
     const blob = new Blob([pdfBytes], { type: "application/pdf" });
