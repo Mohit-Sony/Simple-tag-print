@@ -50,7 +50,7 @@ export default function Home() {
 
     const page = pdfDoc.addPage([pageWidth, pageHeight]);
 
-    const fontSize = 11;
+    const fontSize = 7;
     const leftMargin = 10;
 
     // === BACK SIDE TEXT ===
@@ -73,7 +73,7 @@ export default function Home() {
     // First line (always present)
     page.drawText(lines[0], {
     x: ABC_X,
-    y: ABC_Y - 12,
+    y: ABC_Y - 8,
     size: fontSize,
     font: finalfont,
     color: rgb(0, 0, 0),
@@ -83,7 +83,7 @@ export default function Home() {
     if (lines[1]) {
     page.drawText(`& ${lines[1]}`, {
         x: ABC_X,
-        y: ABC_Y - 24, // 12 points below the previous line
+        y: ABC_Y - 17, // 12 points below the previous line
         size: fontSize,
         font: finalfont,
         color: rgb(0, 0, 0),
@@ -112,7 +112,7 @@ export default function Home() {
 
     page.drawText(`Purity: ${purity}`, {
       x: backX,
-      y: backStartY + 30,
+      y: backStartY + 24+4,
       size: fontSize,
       font: finalfont,
       color: rgb(0, 0, 0),
@@ -120,7 +120,7 @@ export default function Home() {
 
     page.drawText(`G. Wt.: ${ab}`, {
       x: backX,
-      y: backStartY + 18,
+      y: backStartY + 16+4,
       size: fontSize,
       font: finalfont,
       color: rgb(0, 0, 0),
@@ -128,7 +128,7 @@ export default function Home() {
 
     page.drawText(`${encryptedNumber}`, {
       x: backX,
-      y: backStartY + 6,
+      y: backStartY + 8+4,
       size: fontSize,
       font: finalfont,
       color: rgb(0, 0, 0),
