@@ -96,7 +96,7 @@ export default function LabelGenerator() {
       currentY -= lineSpacing;
 
       // Item
-      page.drawText(`Item: ${Item}`, {
+      page.drawText(`Item:${Item}`, {
         x: leftX,
         y: currentY,
         size: fontSize,
