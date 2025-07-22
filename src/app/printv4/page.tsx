@@ -19,13 +19,13 @@ export default function LabelGenerator() {
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
 
   const [items, setItems] = useState<ItemInput[]>([
-    { 
-      itemCode: "BCE0002", 
-      Item: "BROOCH", 
-      GrossWeight: "15.65", 
-      purity: "18K", 
-      Derived_totalAmount: "217739.0", 
-      final_amt: "6221" 
+    {
+      itemCode: "BCE0002",
+      Item: "BROOCH",
+      GrossWeight: "15.65",
+      purity: "18K",
+      Derived_totalAmount: "217739.0",
+      final_amt: "6221"
     },
   ]);
 
@@ -36,13 +36,13 @@ export default function LabelGenerator() {
   };
 
   const addItem = () => {
-    setItems([...items, { 
-      itemCode: "", 
-      Item: "", 
-      GrossWeight: "", 
-      purity: "18K", 
-      Derived_totalAmount: "", 
-      final_amt: "" 
+    setItems([...items, {
+      itemCode: "",
+      Item: "",
+      GrossWeight: "",
+      purity: "18K",
+      Derived_totalAmount: "",
+      final_amt: ""
     }]);
   };
 
@@ -62,130 +62,130 @@ export default function LabelGenerator() {
     const labelHeight = 0.6 * inchToPt;
 
     for (const item of items) {
-        const { itemCode, Item, GrossWeight, purity, final_amt } = item;
+      const { itemCode, Item, GrossWeight, purity, final_amt } = item;
 
-        const page = pdfDoc.addPage([labelWidth, labelHeight]);
-    
-        const fontSize = 5;
-        const purityFontSize = fontSize + 2; // 2 points bigger for purity
-        const leftMargin = 9;
-    
-        // === LEFT SIDE TEXT ===
-        let leftX = leftMargin;
-        let currentY = 30; // Starting Y position
-        const lineSpacing = 6;
-    
-        // Item Code
-        page.drawText(`${itemCode} |${purity}`, {
-          x: leftX,
-          y: currentY,
-          size: fontSize + 2,
-          font: finalfont,
-          color: rgb(0, 0, 0),
-        });
-        currentY -= lineSpacing;
-    
-        // Gross Weight
-        page.drawText(`G. Wt. : ${GrossWeight} Gr`, {
-          x: leftX,
-          y: currentY,
-          size: fontSize,
-          font: finalfont,
-          color: rgb(0, 0, 0),
-        });
-        currentY -= lineSpacing;
-    
-        // Item
-        page.drawText(`Item : ${Item}`, {
-          x: leftX,
-          y: currentY,
-          size: fontSize,
-          font: finalfont,
-          color: rgb(0, 0, 0),
-        });
-        currentY -= lineSpacing;
-    
-    
-        // Final Amount
-        page.drawText(`No. : ${final_amt}`, {
-          x: leftX,
-          y: currentY,
-          size: fontSize,
-          font: finalfont,
-          color: rgb(0, 0, 0),
-        });
-    
-        // === QR Code ===
-        const qrDataUrl = await QRCode.toDataURL(itemCode);
-        const qrImageBytes = await fetch(qrDataUrl).then(res => res.arrayBuffer());
-        const qrImage = await pdfDoc.embedPng(qrImageBytes);
-    
-        const qrDim = 40;
-        let qrX = labelWidth / 4 + 11; // Right side
-        let qrY = labelHeight / 2 - qrDim / 2;
-    
-        page.drawImage(qrImage, {
-          x: qrX,
-          y: qrY,
-          width: qrDim,
-          height: qrDim,
-        });
+      const page = pdfDoc.addPage([labelWidth, labelHeight]);
 
-        // === Back SIDE TEXT ===
-        leftX = labelWidth / 2 + 6
-        currentY = 30
-                // Item Code
-                page.drawText(`${itemCode} | ${purity}`, {
-                  x: leftX,
-                  y: currentY,
-                  size: fontSize + 2,
-                  font: finalfont,
-                  color: rgb(0, 0, 0),
-                });
-                currentY -= lineSpacing;
-            
-                // Gross Weight
-                page.drawText(`G. Wt. : ${GrossWeight}`, {
-                  x: leftX,
-                  y: currentY,
-                  size: fontSize,
-                  font: finalfont,
-                  color: rgb(0, 0, 0),
-                });
-                currentY -= lineSpacing;
-            
-                // Item
-                page.drawText(`Type : ${Item}`, {
-                  x: leftX,
-                  y: currentY,
-                  size: fontSize,
-                  font: finalfont,
-                  color: rgb(0, 0, 0),
-                });
-                currentY -= lineSpacing;
-            
-            
-                // Final Amount
-                page.drawText(final_amt, {
-                  x: leftX,
-                  y: currentY,
-                  size: fontSize,
-                  font: finalfont,
-                  color: rgb(0, 0, 0),
-                });
+      const fontSize = 5;
+      const purityFontSize = fontSize + 2; // 2 points bigger for purity
+      const leftMargin = 9;
 
-                qrX = labelWidth/2 + 55; // Right side
-                qrY = labelHeight / 2 - qrDim / 2;
+      // === LEFT SIDE TEXT ===
+      let leftX = leftMargin;
+      let currentY = 30; // Starting Y position
+      const lineSpacing = 6;
 
-                page.drawImage(qrImage, {
-                  x: qrX,
-                  y: qrY,
-                  width: qrDim,
-                  height: qrDim,
-                });
-        
+      // Item Code
+      page.drawText(`${itemCode} |${purity}`, {
+        x: leftX,
+        y: currentY,
+        size: fontSize + 2,
+        font: finalfont,
+        color: rgb(0, 0, 0),
+      });
+      currentY -= lineSpacing;
 
-      }
+      // Gross Weight
+      page.drawText(`G. Wt. : ${GrossWeight} Grm`, {
+        x: leftX,
+        y: currentY,
+        size: fontSize,
+        font: finalfont,
+        color: rgb(0, 0, 0),
+      });
+      currentY -= lineSpacing;
+
+      // Item
+      page.drawText(`Item : ${Item}`, {
+        x: leftX,
+        y: currentY,
+        size: fontSize,
+        font: finalfont,
+        color: rgb(0, 0, 0),
+      });
+      currentY -= lineSpacing;
+
+
+      // Final Amount
+      page.drawText(`No. : ${final_amt}`, {
+        x: leftX,
+        y: currentY,
+        size: fontSize,
+        font: finalfont,
+        color: rgb(0, 0, 0),
+      });
+
+      // === QR Code ===
+      const qrDataUrl = await QRCode.toDataURL(itemCode);
+      const qrImageBytes = await fetch(qrDataUrl).then(res => res.arrayBuffer());
+      const qrImage = await pdfDoc.embedPng(qrImageBytes);
+
+      const qrDim = 40;
+      let qrX = labelWidth / 4 + 11; // Right side
+      let qrY = labelHeight / 2 - qrDim / 2;
+
+      page.drawImage(qrImage, {
+        x: qrX,
+        y: qrY,
+        width: qrDim,
+        height: qrDim,
+      });
+
+      // === Back SIDE TEXT ===
+      leftX = labelWidth / 2 + 6
+      currentY = 30
+      // Item Code
+      page.drawText(`${itemCode} | ${purity}`, {
+        x: leftX,
+        y: currentY,
+        size: fontSize + 2,
+        font: finalfont,
+        color: rgb(0, 0, 0),
+      });
+      currentY -= lineSpacing;
+
+      // Gross Weight
+      page.drawText(`G. Wt. : ${GrossWeight} Grm`, {
+        x: leftX,
+        y: currentY,
+        size: fontSize,
+        font: finalfont,
+        color: rgb(0, 0, 0),
+      });
+      currentY -= lineSpacing;
+
+      // Item
+      page.drawText(`Item : ${Item}`, {
+        x: leftX,
+        y: currentY,
+        size: fontSize,
+        font: finalfont,
+        color: rgb(0, 0, 0),
+      });
+      currentY -= lineSpacing;
+
+
+      // Final Amount
+      page.drawText(`No. : ${final_amt}`, {
+        x: leftX,
+        y: currentY,
+        size: fontSize,
+        font: finalfont,
+        color: rgb(0, 0, 0),
+      });
+
+      qrX = labelWidth / 2 + 55; // Right side
+      qrY = labelHeight / 2 - qrDim / 2;
+
+      page.drawImage(qrImage, {
+        x: qrX,
+        y: qrY,
+        width: qrDim,
+        height: qrDim,
+      });
+
+
+    }
 
     const pdfBytes = await pdfDoc.save();
     const blob = new Blob([pdfBytes], { type: "application/pdf" });
