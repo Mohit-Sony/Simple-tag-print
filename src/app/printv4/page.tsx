@@ -66,8 +66,8 @@ export default function LabelGenerator() {
 
       const page = pdfDoc.addPage([labelWidth, labelHeight]);
 
-      const fontSize = 6;
-      const purityFontSize = fontSize ; // 2 points bigger for purity
+      const fontSize = 7;
+      const purityFontSize = fontSize; // 2 points bigger for purity
       const leftMargin = 11;
 
       // === LEFT SIDE TEXT ===
@@ -79,7 +79,7 @@ export default function LabelGenerator() {
       page.drawText(`${itemCode} |${purity}`, {
         x: leftX,
         y: currentY,
-        size: fontSize+1 ,
+        size: fontSize,
         font: finalfont,
         color: rgb(0, 0, 0),
       });
@@ -95,15 +95,6 @@ export default function LabelGenerator() {
       });
       currentY -= lineSpacing;
 
-      // Item
-      page.drawText(`Item:${Item}`, {
-        x: leftX,
-        y: currentY,
-        size: fontSize,
-        font: finalfont,
-        color: rgb(0, 0, 0),
-      });
-      currentY -= lineSpacing;
 
 
       // Final Amount
@@ -114,6 +105,18 @@ export default function LabelGenerator() {
         font: finalfont,
         color: rgb(0, 0, 0),
       });
+      currentY -= lineSpacing;
+
+      // Item
+      page.drawText(`${Item}`, {
+        x: leftX,
+        y: currentY,
+        size: fontSize,
+        font: finalfont,
+        color: rgb(0, 0, 0),
+      });
+      currentY -= lineSpacing;
+
 
       // === QR Code ===
       const qrDataUrl = await QRCode.toDataURL(itemCode);
@@ -140,7 +143,7 @@ export default function LabelGenerator() {
       page.drawText(`${itemCode} |${purity}`, {
         x: leftX,
         y: currentY,
-        size: fontSize+1 ,
+        size: fontSize,
         font: finalfont,
         color: rgb(0, 0, 0),
       });
@@ -156,15 +159,6 @@ export default function LabelGenerator() {
       });
       currentY -= lineSpacing;
 
-      // Item
-      page.drawText(`Item: ${Item}`, {
-        x: leftX,
-        y: currentY,
-        size: fontSize,
-        font: finalfont,
-        color: rgb(0, 0, 0),
-      });
-      currentY -= lineSpacing;
 
 
       // Final Amount
@@ -175,6 +169,17 @@ export default function LabelGenerator() {
         font: finalfont,
         color: rgb(0, 0, 0),
       });
+      currentY -= lineSpacing;
+
+      // Item
+      page.drawText(`${Item}`, {
+        x: leftX,
+        y: currentY,
+        size: fontSize,
+        font: finalfont,
+        color: rgb(0, 0, 0),
+      });
+      currentY -= lineSpacing;
 
 
 
