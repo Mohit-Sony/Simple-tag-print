@@ -58,7 +58,7 @@ export default function LabelGenerator() {
     const finalfont = HelveticaBold;
 
     const inchToPt = 72;
-    const labelWidth = 2.5 * inchToPt;
+    const labelWidth = 2.7 * inchToPt;
     const labelHeight = 0.6 * inchToPt;
 
     for (const item of items) {
@@ -66,8 +66,8 @@ export default function LabelGenerator() {
 
       const page = pdfDoc.addPage([labelWidth, labelHeight]);
 
-      const fontSize = 5;
-      const purityFontSize = fontSize + 2; // 2 points bigger for purity
+      const fontSize = 6;
+      const purityFontSize = fontSize ; // 2 points bigger for purity
       const leftMargin = 9;
 
       // === LEFT SIDE TEXT ===
@@ -79,14 +79,14 @@ export default function LabelGenerator() {
       page.drawText(`${itemCode} |${purity}`, {
         x: leftX,
         y: currentY,
-        size: fontSize + 2,
+        size: fontSize ,
         font: finalfont,
         color: rgb(0, 0, 0),
       });
       currentY -= lineSpacing;
 
       // Gross Weight
-      page.drawText(`G. Wt. : ${GrossWeight} Grm`, {
+      page.drawText(`G. Wt. : ${GrossWeight} `, {
         x: leftX,
         y: currentY,
         size: fontSize,
@@ -135,17 +135,18 @@ export default function LabelGenerator() {
       leftX = labelWidth / 2 + 6
       currentY = 30
       // Item Code
-      page.drawText(`${itemCode} | ${purity}`, {
+      // Item Code
+      page.drawText(`${itemCode} |${purity}`, {
         x: leftX,
         y: currentY,
-        size: fontSize + 2,
+        size: fontSize ,
         font: finalfont,
         color: rgb(0, 0, 0),
       });
       currentY -= lineSpacing;
 
       // Gross Weight
-      page.drawText(`G. Wt. : ${GrossWeight} Grm`, {
+      page.drawText(`G. Wt. : ${GrossWeight} `, {
         x: leftX,
         y: currentY,
         size: fontSize,
