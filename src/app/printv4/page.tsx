@@ -68,25 +68,25 @@ export default function LabelGenerator() {
 
       const fontSize = 6;
       const purityFontSize = fontSize ; // 2 points bigger for purity
-      const leftMargin = 9;
+      const leftMargin = 11;
 
       // === LEFT SIDE TEXT ===
       let leftX = leftMargin;
       let currentY = 30; // Starting Y position
-      const lineSpacing = 6;
+      const lineSpacing = 7;
 
       // Item Code
       page.drawText(`${itemCode} |${purity}`, {
         x: leftX,
         y: currentY,
-        size: fontSize ,
+        size: fontSize+1 ,
         font: finalfont,
         color: rgb(0, 0, 0),
       });
       currentY -= lineSpacing;
 
       // Gross Weight
-      page.drawText(`G. Wt. : ${GrossWeight} `, {
+      page.drawText(`G. Wt. :${GrossWeight} `, {
         x: leftX,
         y: currentY,
         size: fontSize,
@@ -96,7 +96,7 @@ export default function LabelGenerator() {
       currentY -= lineSpacing;
 
       // Item
-      page.drawText(`Item : ${Item}`, {
+      page.drawText(`Item: ${Item}`, {
         x: leftX,
         y: currentY,
         size: fontSize,
@@ -107,7 +107,7 @@ export default function LabelGenerator() {
 
 
       // Final Amount
-      page.drawText(`No. : ${final_amt}`, {
+      page.drawText(`No : ${final_amt}`, {
         x: leftX,
         y: currentY,
         size: fontSize,
@@ -120,8 +120,8 @@ export default function LabelGenerator() {
       const qrImageBytes = await fetch(qrDataUrl).then(res => res.arrayBuffer());
       const qrImage = await pdfDoc.embedPng(qrImageBytes);
 
-      const qrDim = 40;
-      let qrX = labelWidth / 4 + 12; // Right side
+      const qrDim = 35;
+      let qrX = labelWidth / 4 + 15; // Right side
       let qrY = labelHeight / 2 - qrDim / 2;
 
       page.drawImage(qrImage, {
@@ -132,21 +132,22 @@ export default function LabelGenerator() {
       });
 
       // === Back SIDE TEXT ===
-      leftX = labelWidth / 2 + 6
+      leftX = labelWidth / 2 + 10
       currentY = 30
+      // Item Code
       // Item Code
       // Item Code
       page.drawText(`${itemCode} |${purity}`, {
         x: leftX,
         y: currentY,
-        size: fontSize ,
+        size: fontSize+1 ,
         font: finalfont,
         color: rgb(0, 0, 0),
       });
       currentY -= lineSpacing;
 
       // Gross Weight
-      page.drawText(`G. Wt. : ${GrossWeight} `, {
+      page.drawText(`G. Wt. :${GrossWeight} `, {
         x: leftX,
         y: currentY,
         size: fontSize,
@@ -156,7 +157,7 @@ export default function LabelGenerator() {
       currentY -= lineSpacing;
 
       // Item
-      page.drawText(`Item : ${Item}`, {
+      page.drawText(`Item: ${Item}`, {
         x: leftX,
         y: currentY,
         size: fontSize,
@@ -167,7 +168,7 @@ export default function LabelGenerator() {
 
 
       // Final Amount
-      page.drawText(`No. : ${final_amt}`, {
+      page.drawText(`No : ${final_amt}`, {
         x: leftX,
         y: currentY,
         size: fontSize,
@@ -175,7 +176,9 @@ export default function LabelGenerator() {
         color: rgb(0, 0, 0),
       });
 
-      qrX = labelWidth / 2 + 55; // Right side
+
+
+      qrX = labelWidth / 2 + 60; // Right side
       qrY = labelHeight / 2 - qrDim / 2;
 
       page.drawImage(qrImage, {
