@@ -121,7 +121,7 @@ export default function LabelGenerator() {
       const qrImage = await pdfDoc.embedPng(qrImageBytes);
 
       const qrDim = 40;
-      let qrX = labelWidth / 4 + 11; // Right side
+      let qrX = labelWidth / 4 + 12; // Right side
       let qrY = labelHeight / 2 - qrDim / 2;
 
       page.drawImage(qrImage, {
