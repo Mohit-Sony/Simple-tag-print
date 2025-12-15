@@ -7,12 +7,12 @@ import { Trash2, Plus, Upload, Download } from "lucide-react";
 import * as XLSX from "xlsx";
 
 interface ItemInput {
-  itemCode: string;
-  Item: string;
-  GrossWeight: string | number;
-  purity: string;
-  Derived_totalAmount: string | number;
-  final_amt: string | number;
+  SKU: string;
+  ITEM: string;
+  "G.WT.": string | number;
+  Purity: string;
+  "24K": string | number;
+  "No.": string | number;
 }
 
 function getCorrectJewelryName(item: string): string {
@@ -58,12 +58,12 @@ export default function LabelGenerator() {
 
   const [items, setItems] = useState<ItemInput[]>([
     {
-      "itemCode": "BCF0001",
-      "Item": "NECKLACE",
-      "GrossWeight": 100.00,
-      "purity": "18K",
-      "Derived_totalAmount": 0,
-      "final_amt": 27500
+      "SKU": "BCF0001",
+      "ITEM": "NECKLACE",
+      "G.WT.": 100.00,
+      "Purity": "18K",
+      "24K": 0,
+      "No.": 27500
     }
   ]);
 
@@ -75,12 +75,12 @@ export default function LabelGenerator() {
 
   const addItem = () => {
     setItems([...items, {
-      itemCode: "",
-      Item: "",
-      GrossWeight: "",
-      purity: "18K",
-      Derived_totalAmount: "",
-      final_amt: ""
+      SKU: "",
+      ITEM: "",
+      "G.WT.": "",
+      Purity: "18K",
+      "24K": "",
+      "No.": ""
     }]);
   };
 
@@ -104,12 +104,12 @@ export default function LabelGenerator() {
         const jsonData = XLSX.utils.sheet_to_json(sheet);
 
         const parsedItems: ItemInput[] = jsonData.map((row: any) => ({
-          itemCode: row["itemCode"] || row["Item Code"] || row["SKU"] || "",
-          Item: row["Item"] || row["item"] || "",
-          GrossWeight: row["GrossWeight"] || row["Gross Weight"] || row["G.WT."] || "",
-          purity: row["purity"] || row["Purity"] || "18K",
-          Derived_totalAmount: row["Derived_totalAmount"] || row["Total Amount"] || "",
-          final_amt: row["final_amt"] || row["Final Amount"] || row["NO."] || "",
+          SKU: row["SKU"] || row["itemCode"] || row["Item Code"] || "",
+          ITEM: row["ITEM"] || row["Item"] || row["item"] || "",
+          "G.WT.": row["G.WT."] || row["GrossWeight"] || row["Gross Weight"] || "",
+          Purity: row["Purity"] || row["purity"] || "18K",
+          "24K": row["24K"] || row["Derived_totalAmount"] || row["Total Amount"] || "",
+          "No.": row["No."] || row["final_amt"] || row["Final Amount"] || row["NO."] || "",
         }));
 
         if (parsedItems.length > 0) {
@@ -131,35 +131,35 @@ export default function LabelGenerator() {
   const downloadTemplate = () => {
     const templateData = [
       {
-        itemCode: "BCF0001",
-        Item: "NECKLACE",
-        GrossWeight: 100.00,
-        purity: "18K",
-        Derived_totalAmount: 25000,
-        final_amt: 27500
+        SKU: "BCF0001",
+        ITEM: "NECKLACE",
+        "G.WT.": 100.00,
+        Purity: "18K",
+        "24K": 62.50,
+        "No.": 27500
       },
       {
-        itemCode: "BCF0002",
-        Item: "EARRING",
-        GrossWeight: 15.50,
-        purity: "14K",
-        Derived_totalAmount: 8000,
-        final_amt: 8500
+        SKU: "BCF0002",
+        ITEM: "EARRING",
+        "G.WT.": 15.50,
+        Purity: "14K",
+        "24K": 6.42,
+        "No.": 8500
       }
     ];
 
     const worksheet = XLSX.utils.json_to_sheet(templateData);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Labels");
-    
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet3");
+
     // Set column widths
     worksheet["!cols"] = [
-      { wch: 12 }, // itemCode
-      { wch: 15 }, // Item
-      { wch: 12 }, // GrossWeight
-      { wch: 8 },  // purity
-      { wch: 18 }, // Derived_totalAmount
-      { wch: 12 }, // final_amt
+      { wch: 12 }, // SKU
+      { wch: 15 }, // ITEM
+      { wch: 12 }, // G.WT.
+      { wch: 8 },  // Purity
+      { wch: 12 }, // 24K
+      { wch: 12 }, // No.
     ];
 
     XLSX.writeFile(workbook, "label_template.xlsx");
@@ -183,90 +183,126 @@ export default function LabelGenerator() {
     const labelHeight = 0.6 * inchToPt;
 
     for (const item of items) {
-      let { itemCode, Item, GrossWeight, purity, final_amt } = item;
-      Item = getCorrectJewelryName(Item);
-      GrossWeight = toFixedNumber(GrossWeight);
-      final_amt = toFixedNumber(final_amt);
+      let { SKU, ITEM, "G.WT.": GrossWeight, Purity, "24K": goldWeight, "No.": finalAmount } = item;
+      ITEM = getCorrectJewelryName(ITEM);
+      const gwt = toFixedNumber(GrossWeight);
+      const gold24K = toFixedNumber(goldWeight);
+      const no = toFixedNumber(finalAmount);
 
       const page = pdfDoc.addPage([labelWidth, labelHeight]);
 
-      const fontSize = 7;
+      const labelFontSize = 8;
+      const valueFontSize = 8;
+      const largeFontSize = 16;
       const leftMargin = 8;
-      const lineSpacing = 10;
-      const halfWidth = labelWidth / 2;
+      const lineSpacing = 11;
 
-      // ============ LEFT SECTION ============
-      let leftX = leftMargin;
-      let currentY = labelHeight - 12;
+      // Left section column positions
+      const leftLabelX = leftMargin;
+      const leftValueX = leftMargin + 42;
 
-      // SKU (Item Code)
-      page.drawText(`SKU`, {
-        x: leftX,
+      // Right section position (starts around middle)
+      const rightSectionX = labelWidth / 2 + 10;
+
+      // ============ TAG FORMAT (matching image) ============
+      let currentY = labelHeight - 10;
+
+      // === LINE 1: SKU and 24K ===
+      // Left: SKU label + value
+      page.drawText(`${SKU}`, {
+        x: leftLabelX,
         y: currentY,
-        size: fontSize,
+        size: labelFontSize,
         font: finalfont,
         color: rgb(0, 0, 0),
       });
-      page.drawText(`${itemCode}`, {
-        x: leftX + 28,
+
+      // Right: 24K label
+      page.drawText(`24K`, {
+        x: rightSectionX,
         y: currentY,
-        size: fontSize,
+        size: labelFontSize,
         font: finalfont,
         color: rgb(0, 0, 0),
       });
+
+      // Right: 24K value
+      page.drawText(`${gold24K}`, {
+        x: rightSectionX + 35,
+        y: currentY,
+        size: valueFontSize,
+        font: finalfont,
+        color: rgb(0, 0, 0),
+      });
+
       currentY -= lineSpacing;
 
-      // G.WT. (Gross Weight)
-      page.drawText(`G.WT.`, {
-        x: leftX,
+      // === LINE 2: Item and LARGE NO. ===
+      // Left: Item label
+      page.drawText(`Item`, {
+        x: leftLabelX,
         y: currentY,
-        size: fontSize,
+        size: labelFontSize,
         font: finalfont,
         color: rgb(0, 0, 0),
       });
-      page.drawText(`${GrossWeight} GM`, {
-        x: leftX + 28,
+
+      // Left: Item value
+      page.drawText(`${ITEM}`, {
+        x: leftValueX,
         y: currentY,
-        size: fontSize,
+        size: valueFontSize,
         font: finalfont,
         color: rgb(0, 0, 0),
       });
+
       currentY -= lineSpacing;
 
-      // NO. (Final Amount)
-      page.drawText(`NO.`, {
-        x: leftX,
+      // === LINE 3: Gr Wt. ===
+      // Left: Gr Wt. label
+      page.drawText(`Gr Wt.`, {
+        x: leftLabelX,
         y: currentY,
-        size: fontSize,
+        size: labelFontSize,
         font: finalfont,
         color: rgb(0, 0, 0),
       });
-      page.drawText(`${final_amt}`, {
-        x: leftX + 28,
+
+      // Left: Gr Wt. value
+      page.drawText(`${gwt}`, {
+        x: leftValueX,
         y: currentY,
-        size: fontSize,
+        size: valueFontSize,
         font: finalfont,
         color: rgb(0, 0, 0),
       });
 
-      // ============ RIGHT SECTION ============
-      const rightSectionX = halfWidth + 5;
-
-      // Purity and Item name on top line
-      page.drawText(`Purity :-  ${purity}   ${Item}`, {
-        x: rightSectionX,
-        y: labelHeight - 12,
-        size: fontSize,
+      // Right: LARGE "NO. xxxxx" centered vertically
+      page.drawText(`NO. ${no}`, {
+        x: rightSectionX + 5,
+        y: currentY + 3,
+        size: largeFontSize,
         font: finalfont,
         color: rgb(0, 0, 0),
       });
 
-      // Large "NO XXXXX" text
-      const largeNoFontSize = 14;
-      page.drawText(`NO ${final_amt}`, {
-        x: rightSectionX,
-        y: labelHeight - 30,
-        size: largeNoFontSize,
+      currentY -= lineSpacing;
+
+      // === LINE 4: Purity ===
+      // Left: Purity label
+      page.drawText(`Purity`, {
+        x: leftLabelX,
+        y: currentY,
+        size: labelFontSize,
+        font: finalfont,
+        color: rgb(0, 0, 0),
+      });
+
+      // Left: Purity value
+      page.drawText(`${Purity}`, {
+        x: leftValueX,
+        y: currentY,
+        size: valueFontSize,
         font: finalfont,
         color: rgb(0, 0, 0),
       });
@@ -291,12 +327,12 @@ export default function LabelGenerator() {
           <thead className="bg-gray-100 text-sm text-gray-600">
             <tr>
               <th className="border px-3 py-2">#</th>
-              <th className="border px-3 py-2">Item Code</th>
-              <th className="border px-3 py-2">Item</th>
-              <th className="border px-3 py-2">Gross Weight</th>
+              <th className="border px-3 py-2">SKU</th>
+              <th className="border px-3 py-2">ITEM</th>
+              <th className="border px-3 py-2">G.WT.</th>
               <th className="border px-3 py-2">Purity</th>
-              <th className="border px-3 py-2">Total Amount</th>
-              <th className="border px-3 py-2">Final Amount</th>
+              <th className="border px-3 py-2">24K</th>
+              <th className="border px-3 py-2">No.</th>
               <th className="border px-3 py-2">Action</th>
             </tr>
           </thead>
@@ -308,32 +344,32 @@ export default function LabelGenerator() {
                   <input
                     type="text"
                     className="w-full p-1 border rounded"
-                    value={item.itemCode}
-                    onChange={(e) => updateItem(idx, "itemCode", e.target.value)}
+                    value={item.SKU}
+                    onChange={(e) => updateItem(idx, "SKU", e.target.value)}
                   />
                 </td>
                 <td className="border px-2">
                   <input
                     type="text"
                     className="w-full p-1 border rounded"
-                    value={item.Item}
-                    onChange={(e) => updateItem(idx, "Item", e.target.value)}
+                    value={item.ITEM}
+                    onChange={(e) => updateItem(idx, "ITEM", e.target.value)}
                   />
                 </td>
                 <td className="border px-2">
                   <input
                     type="number"
                     className="w-full p-1 border rounded"
-                    value={item.GrossWeight}
+                    value={item["G.WT."]}
                     step="0.01"
-                    onChange={(e) => updateItem(idx, "GrossWeight", e.target.value)}
+                    onChange={(e) => updateItem(idx, "G.WT.", e.target.value)}
                   />
                 </td>
                 <td className="border px-2">
                   <select
                     className="w-full p-1 border rounded"
-                    value={item.purity}
-                    onChange={(e) => updateItem(idx, "purity", e.target.value)}
+                    value={item.Purity}
+                    onChange={(e) => updateItem(idx, "Purity", e.target.value)}
                   >
                     <option value="18K">18K</option>
                     <option value="14K">14K</option>
@@ -343,16 +379,16 @@ export default function LabelGenerator() {
                   <input
                     type="number"
                     className="w-full p-1 border rounded"
-                    value={item.Derived_totalAmount}
-                    onChange={(e) => updateItem(idx, "Derived_totalAmount", e.target.value)}
+                    value={item["24K"]}
+                    onChange={(e) => updateItem(idx, "24K", e.target.value)}
                   />
                 </td>
                 <td className="border px-2">
                   <input
                     type="number"
                     className="w-full p-1 border rounded"
-                    value={item.final_amt}
-                    onChange={(e) => updateItem(idx, "final_amt", e.target.value)}
+                    value={item["No."]}
+                    onChange={(e) => updateItem(idx, "No.", e.target.value)}
                   />
                 </td>
                 <td className="border text-center">
@@ -406,9 +442,9 @@ export default function LabelGenerator() {
       <div className="mt-4 p-4 bg-gray-50 rounded border text-sm text-gray-600">
         <div className="flex justify-between items-center">
           <div>
-            <strong>Expected CSV/Excel Format:</strong>
-            <p className="mt-1">Columns: itemCode, Item, GrossWeight, purity, Derived_totalAmount, final_amt</p>
-            <p className="text-xs mt-1">Alternative column names also accepted: Item Code, SKU, Gross Weight, G.WT., Purity, Total Amount, Final Amount, NO.</p>
+            <strong>Expected CSV/Excel Format (Sheet3 format):</strong>
+            <p className="mt-1">Columns: SKU, ITEM, G.WT., Purity, 24K, No.</p>
+            <p className="text-xs mt-1">Import the "Sheet3" format from your SAMPLE TAG.xlsx or use the template below.</p>
           </div>
           <button
             onClick={downloadTemplate}
