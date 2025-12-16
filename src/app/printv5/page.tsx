@@ -206,13 +206,13 @@ export default function LabelGenerator() {
       const rightSectionX = labelWidth / 2 + 10;
 
       // Calculate vertical center for right section content
-      const rightContentHeight = rightTopFontSize + largeFontSize + 5; // Total height of right content
-      const rightStartY = (labelHeight - rightContentHeight) / 2 + rightContentHeight - 5;
+      const rightContentHeight = labelFontSize + rightTopFontSize + largeFontSize + 20; // Total height of right content (SKU + 24K + NO.)
+      const rightStartY = labelHeight - 10; // Start from top, same as left side
 
       // ============ TAG FORMAT (matching image) ============
       let currentY = labelHeight - 10;
 
-      // === LINE 1: SKU and 24K ===
+      // === LINE 1: SKU ===
       // Left: SKU label + value
       page.drawText(`${SKU}`, {
         x: leftLabelX,
@@ -222,19 +222,28 @@ export default function LabelGenerator() {
         color: rgb(0, 0, 0),
       });
 
-      // Right: 24K label (vertically centered)
-      page.drawText(`24K`, {
+      // Right: SKU (at the top)
+      page.drawText(`${SKU}`, {
         x: rightSectionX,
         y: rightStartY,
+        size: labelFontSize,
+        font: finalfont,
+        color: rgb(0, 0, 0),
+      });
+
+      // Right: 24K label (below SKU)
+      page.drawText(`24K`, {
+        x: rightSectionX,
+        y: rightStartY - labelFontSize - 5,
         size: rightTopFontSize,
         font: finalfont,
         color: rgb(0, 0, 0),
       });
 
-      // Right: 24K value (vertically centered)
+      // Right: 24K value (below SKU)
       page.drawText(`${gold24K}`, {
         x: rightSectionX + 35,
-        y: rightStartY,
+        y: rightStartY - labelFontSize - 5,
         size: rightTopFontSize,
         font: finalfont,
         color: rgb(0, 0, 0),
@@ -282,10 +291,10 @@ export default function LabelGenerator() {
         color: rgb(0, 0, 0),
       });
 
-      // Right: LARGE "NO. xxxxx" (vertically centered below 24K)
+      // Right: LARGE "NO. xxxxx" (below 24K)
       page.drawText(`NO. ${no}`, {
         x: rightSectionX,
-        y: rightStartY - rightTopFontSize - 5,
+        y: rightStartY - labelFontSize - rightTopFontSize - 10,
         size: largeFontSize,
         font: finalfont,
         color: rgb(0, 0, 0),
