@@ -193,9 +193,10 @@ export default function LabelGenerator() {
 
       const labelFontSize = 8;
       const valueFontSize = 8;
+      const rightTopFontSize = 10;
       const largeFontSize = 16;
       const leftMargin = 8;
-      const lineSpacing = 11;
+      const lineSpacing = 10;
 
       // Left section column positions
       const leftLabelX = leftMargin;
@@ -203,6 +204,10 @@ export default function LabelGenerator() {
 
       // Right section position (starts around middle)
       const rightSectionX = labelWidth / 2 + 10;
+
+      // Calculate vertical center for right section content
+      const rightContentHeight = rightTopFontSize + largeFontSize + 5; // Total height of right content
+      const rightStartY = (labelHeight - rightContentHeight) / 2 + rightContentHeight - 5;
 
       // ============ TAG FORMAT (matching image) ============
       let currentY = labelHeight - 10;
@@ -217,27 +222,27 @@ export default function LabelGenerator() {
         color: rgb(0, 0, 0),
       });
 
-      // Right: 24K label
+      // Right: 24K label (vertically centered)
       page.drawText(`24K`, {
         x: rightSectionX,
-        y: currentY,
-        size: labelFontSize,
+        y: rightStartY,
+        size: rightTopFontSize,
         font: finalfont,
         color: rgb(0, 0, 0),
       });
 
-      // Right: 24K value
+      // Right: 24K value (vertically centered)
       page.drawText(`${gold24K}`, {
         x: rightSectionX + 35,
-        y: currentY,
-        size: valueFontSize,
+        y: rightStartY,
+        size: rightTopFontSize,
         font: finalfont,
         color: rgb(0, 0, 0),
       });
 
       currentY -= lineSpacing;
 
-      // === LINE 2: Item and LARGE NO. ===
+      // === LINE 2: Item ===
       // Left: Item label
       page.drawText(`Item`, {
         x: leftLabelX,
@@ -277,10 +282,10 @@ export default function LabelGenerator() {
         color: rgb(0, 0, 0),
       });
 
-      // Right: LARGE "NO. xxxxx" centered vertically
+      // Right: LARGE "NO. xxxxx" (vertically centered below 24K)
       page.drawText(`NO. ${no}`, {
-        x: rightSectionX + 5,
-        y: currentY + 3,
+        x: rightSectionX,
+        y: rightStartY - rightTopFontSize - 5,
         size: largeFontSize,
         font: finalfont,
         color: rgb(0, 0, 0),
