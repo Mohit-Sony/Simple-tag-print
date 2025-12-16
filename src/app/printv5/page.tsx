@@ -241,7 +241,7 @@ export default function LabelGenerator() {
       });
 
       // Right: 24K value (below SKU)
-      page.drawText(`${gold24K} gm`, {
+      page.drawText(`${gold24K.toFixed(3)} gm`, {
         x: rightSectionX + 35,
         y: rightStartY - labelFontSize - 5,
         size: rightTopFontSize,
@@ -283,7 +283,7 @@ export default function LabelGenerator() {
       });
 
       // Left: Gr Wt. value
-      page.drawText(`${gwt} gm`, {
+      page.drawText(`${gwt.toFixed(3)} gm`, {
         x: leftValueX,
         y: currentY,
         size: valueFontSize,
