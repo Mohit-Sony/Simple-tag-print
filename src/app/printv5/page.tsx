@@ -165,12 +165,12 @@ export default function LabelGenerator() {
     XLSX.writeFile(workbook, "label_template.xlsx");
   };
 
-  function toFixedNumber(input: string | number): number {
+  function toFixedNumber(input: string | number, decimals: number = 2): number {
     const num = typeof input === "number" ? input : Number(input);
     if (isNaN(num)) {
       throw new Error("Invalid number input");
     }
-    return parseFloat(num.toFixed(2));
+    return parseFloat(num.toFixed(decimals));
   }
 
   const generateMultiplePDF = async () => {
@@ -185,8 +185,8 @@ export default function LabelGenerator() {
     for (const item of items) {
       let { SKU, ITEM, "G.WT.": GrossWeight, Purity, "24K": goldWeight, "No.": finalAmount } = item;
       ITEM = getCorrectJewelryName(ITEM);
-      const gwt = toFixedNumber(GrossWeight);
-      const gold24K = toFixedNumber(goldWeight);
+      const gwt = toFixedNumber(GrossWeight, 3);
+      const gold24K = toFixedNumber(goldWeight, 3);
       const no = toFixedNumber(finalAmount);
 
       const page = pdfDoc.addPage([labelWidth, labelHeight]);
